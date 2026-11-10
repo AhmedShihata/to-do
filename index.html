@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول / إنشاء حساب</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+        .login-card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 350px;
+            text-align: center;
+        }
+        h2 { color: #333; margin-bottom: 20px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        #username-group {
+            display: none; 
+        }
+        input:focus { border-color: #667eea; }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button:hover { background: #5563c1; }
+        .switch-link {
+            margin-top: 15px;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .switch-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card" id="form-container">
+        <h2 id="form-title">LogIn</h2>
+        <form id="login-form">
+            <div id="username-group">
+            <input type="text" id="username" placeholder="Your Name">
+            </div>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" id="submit-btn">Submit</button>
+        </form>
+        <div class="switch-link" id="switch-btn">Don't have an account? Create a new account</div>
+    </div>
+
+    <script>
+
+        let isLoginMode = true;
+        let formTitle = document.getElementById("form-title");
+        let submitBtn = document.getElementById("submit-btn");
+        let switchBtn = document.getElementById("switch-btn");
+        let loginForm = document.getElementById("login-form");
+        let usernameGroup = document.getElementById("username-group");
+        let usernameInput = document.getElementById("username");
+
+        switchBtn.addEventListener("click", () => {
+            isLoginMode = !isLoginMode;
+            if (isLoginMode) {
+                formTitle.textContent = "Login";
+                submitBtn.textContent = "Submit";
+                switchBtn.textContent = "Don't have an account? Create a new account";
+                usernameGroup.style.display = "none";
+                usernameInput.value = ""; // تفريغ الحقل عند العودة للـ Login
+            } else {
+                formTitle.textContent = "Sign Up";
+                submitBtn.textContent = "Submit";
+                switchBtn.textContent = "Already have an account? Log in";
+                usernameGroup.style.display = "block";
+            }
+        });
+
+        loginForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            
+            let email = document.getElementById("email").value.trim();
+            let pass = document.getElementById("password").value.trim();
+
+            if (isLoginMode) {
+                // وضع تسجيل الدخول
+                let savedEmail = localStorage.getItem("app_user");
+                let savedPass = localStorage.getItem("app_pass");
+
+                if (email === savedEmail && pass === savedPass) {
+                    localStorage.setItem("isLoggedIn", "true");
+                    window.location.href = "todo.html"; 
+                } else {
+                    alert("The email or password is incorrect, or you have not registered yet!");
+                }
+            }
+            else {
+                // وضع إنشاء الحساب (Sign Up)
+                let Name = usernameInput.value.trim();
+
+                if (Name && email && pass) {
+                    localStorage.setItem("app_name", Name);
+                    localStorage.setItem("app_user", email);
+                    localStorage.setItem("app_pass", pass);
+                    
+                    alert("Account created successfully! Please log in.");
+                    
+                    // العودة تلقائياً لوضع Login بعد التسجيل الناجح
+                    isLoginMode = true;
+                    formTitle.textContent = "Login";
+                    submitBtn.textContent = "Submit";
+                    switchBtn.textContent = "Don't have an account? Create a new account";
+                    usernameGroup.style.display = "none";
+                    loginForm.reset(); 
+                } else {
+                    alert("Please fill in all fields (Name, Email, and Password)!");
+                }
+            }
+        });
+        
+
+    </script>
+</body>
+</html>
